@@ -36,12 +36,10 @@ export default function ReviewsSection() {
 
   return (
     <section id="reviews" className="py-24 md:py-32 bg-pub-black relative overflow-hidden">
-      {/* Decorative bg */}
       <div className="absolute inset-0 opacity-3"
-           style={{ backgroundImage: 'radial-gradient(circle, #c9a84c 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+           style={{ backgroundImage: 'radial-gradient(circle, #5e909c 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Title */}
         <div ref={titleRef} className="text-center mb-16">
           <h2 className="section-title">{t('reviews.title')}</h2>
           <p className="section-subtitle">{t('reviews.subtitle')}</p>
@@ -49,7 +47,7 @@ export default function ReviewsSection() {
         </div>
 
         {/* Stats bar */}
-        <div ref={statsRef} className="flex flex-wrap justify-center gap-12 mb-16 py-10 border-y border-pub-gold/20">
+        <div ref={statsRef} className="flex flex-wrap justify-center gap-12 mb-16 py-10 border-y border-pub-teal/20">
           <StatItem value={4.9} decimals={1} suffix=" ★" label={t('reviews.google_rating')} />
           <StatItem value={25} decimals={0} suffix="+" label={t('reviews.reviews_count')} />
           <StatItem value={100} decimals={0} suffix="%" label={isHu ? 'Elégedett vendég' : 'Satisfied guests'} />
@@ -57,7 +55,6 @@ export default function ReviewsSection() {
 
         {/* Review carousel */}
         <div className="max-w-3xl mx-auto">
-          {/* Active review */}
           <div className="relative min-h-[200px]">
             {reviews.map((r, i) => (
               <div key={r.id}
@@ -65,19 +62,19 @@ export default function ReviewsSection() {
                      ? 'opacity-100 translate-x-0'
                      : i < active ? 'opacity-0 -translate-x-8 absolute inset-0' : 'opacity-0 translate-x-8 absolute inset-0'
                    }`}>
-                <div className="text-pub-gold text-4xl mb-4 font-serif leading-none">"</div>
+                <div className="text-pub-teal text-4xl mb-4 font-serif leading-none">"</div>
                 <p className="text-pub-cream text-lg md:text-xl font-serif italic leading-relaxed mb-8">
                   {text(r)}
                 </p>
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-pub-gold/20 border border-pub-gold/40 flex items-center justify-center
-                                  font-display text-pub-gold text-sm">
+                  <div className="w-10 h-10 rounded-full bg-pub-teal/20 border border-pub-teal/40 flex items-center justify-center
+                                  font-display text-pub-teal text-sm">
                     {r.authorName[0]}
                   </div>
                   <div>
                     <div className="text-pub-cream font-medium">{r.authorName}</div>
                     <div className="flex items-center gap-2">
-                      <span className="text-pub-gold text-xs">{'★'.repeat(r.rating)}</span>
+                      <span className="text-pub-gold text-xs" aria-label={`${r.rating} csillag`}>{'★'.repeat(r.rating)}</span>
                       <span className="text-pub-cream/40 text-xs">
                         {r.source === 'google' ? t('reviews.source_google') : t('reviews.source_facebook')}
                       </span>
@@ -93,7 +90,7 @@ export default function ReviewsSection() {
             {reviews.map((_, i) => (
               <button key={i} onClick={() => setActive(i)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  i === active ? 'bg-pub-gold scale-125' : 'bg-pub-cream/20 hover:bg-pub-cream/40'
+                  i === active ? 'bg-pub-teal scale-125' : 'bg-pub-cream/20 hover:bg-pub-cream/40'
                 }`} />
             ))}
           </div>
@@ -108,7 +105,7 @@ function StatItem({ value, decimals, suffix, label }: {
 }) {
   return (
     <div className="text-center">
-      <div className="font-display text-4xl md:text-5xl text-pub-gold">
+      <div className="font-display text-4xl md:text-5xl text-pub-teal">
         <CountUp end={value} decimals={decimals} duration={2.5} separator="," />
         {suffix}
       </div>

@@ -8,9 +8,9 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-pub-dark text-pub-cream">
       {/* Header */}
-      <div className="bg-pub-black border-b border-pub-gold/20 py-6 px-4">
+      <div className="bg-pub-black border-b border-pub-teal/20 py-6 px-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link to="/" className="font-display text-pub-gold text-xl tracking-widest hover:text-pub-gold-light transition-colors">
+          <Link to="/" className="font-display text-pub-teal text-xl tracking-widest hover:text-pub-teal-light transition-colors">
             ← TÖRZSHELY 16
           </Link>
           <div className="text-pub-cream/40 text-xs font-display tracking-widest uppercase">
@@ -23,7 +23,7 @@ export default function PrivacyPage() {
         {isHu ? <HungarianContent /> : <EnglishContent />}
       </div>
 
-      <footer className="border-t border-pub-gold/10 py-8 text-center text-pub-cream/30 text-xs">
+      <footer className="border-t border-pub-teal/10 py-8 text-center text-pub-cream/30 text-xs">
         © {new Date().getFullYear()} Törzshely 16 – Thököly út 7/b, 1163 Budapest
       </footer>
     </div>

@@ -19,10 +19,10 @@ export default function EventTicker() {
   const items = [...events, ...events] // duplicate for seamless loop
 
   return (
-    <div className="bg-pub-gold py-3 overflow-hidden relative">
+    <div className="bg-pub-teal py-3 overflow-hidden relative">
       {/* Label */}
-      <div className="absolute left-0 top-0 bottom-0 z-10 bg-pub-dark flex items-center px-4 border-r border-pub-gold/50">
-        <span className="font-display text-pub-gold text-xs tracking-widest uppercase whitespace-nowrap">
+      <div className="absolute left-0 top-0 bottom-0 z-10 bg-pub-dark flex items-center px-4 border-r border-pub-teal/50">
+        <span className="font-display text-pub-teal text-xs tracking-widest uppercase whitespace-nowrap">
           {t('ticker.label')}
         </span>
       </div>

@@ -82,7 +82,7 @@ export default function ReservationSection() {
     return (
       <section id="reservation" className="py-24 bg-pub-dark">
         <div className="max-w-2xl mx-auto px-4 text-center">
-          <div className="text-pub-gold text-6xl mb-6">✓</div>
+          <div className="text-pub-teal text-6xl mb-6">✓</div>
           <h2 className="section-title mb-4">{isHu ? 'Foglalás elküldve!' : 'Reservation sent!'}</h2>
           <p className="text-pub-cream/70 mb-8">{t('reservation.success')}</p>
           <button onClick={() => setSuccess(false)} className="btn-outline">
@@ -102,25 +102,20 @@ export default function ReservationSection() {
           <div className="gold-divider" />
         </div>
 
-        <div className="border border-pub-gold/20 p-8 md:p-12">
+        <div className="border border-pub-teal/20 p-8 md:p-12">
 
           {/* Step 1: Seating area */}
           <div className="mb-10">
             <StepLabel n={1} label={isHu ? 'Helyszín választás' : 'Choose seating area'} />
             <div className="grid grid-cols-2 gap-4 mt-4">
               {(Object.entries(AREA_CONFIG) as [SeatingArea, typeof AREA_CONFIG.INDOOR][]).map(([key, cfg]) => {
-                const isTeal = key === 'OUTDOOR'
                 const isSelected = selectedArea === key
                 return (
                   <button key={key} onClick={() => { setSelectedArea(key); setSelectedSlot(null) }}
                     className={`p-5 text-left border transition-all duration-200 ${
                       isSelected
-                        ? isTeal
-                          ? 'bg-pub-teal/10 border-pub-teal text-pub-cream'
-                          : 'bg-pub-gold/10 border-pub-gold text-pub-cream'
-                        : isTeal
-                          ? 'border-pub-teal/20 text-pub-cream/60 hover:border-pub-teal/50 hover:text-pub-cream'
-                          : 'border-pub-gold/20 text-pub-cream/60 hover:border-pub-gold/50 hover:text-pub-cream'
+                        ? 'bg-pub-teal/10 border-pub-teal text-pub-cream'
+                        : 'border-pub-teal/20 text-pub-cream/60 hover:border-pub-teal/50 hover:text-pub-cream'
                     }`}>
                     <div className="text-2xl mb-2">{cfg.icon}</div>
                     <div className="font-display tracking-wider text-sm mb-1">
@@ -130,7 +125,7 @@ export default function ReservationSection() {
                       {isHu ? cfg.descHu : cfg.descEn}
                     </div>
                     {isSelected && (
-                      <div className={`text-xs mt-2 font-display tracking-widest ${isTeal ? 'text-pub-teal' : 'text-pub-gold'}`}>
+                      <div className="text-xs mt-2 font-display tracking-widest text-pub-teal">
                         ✓ KIVÁLASZTVA
                       </div>
                     )}
@@ -149,8 +144,8 @@ export default function ReservationSection() {
                   <button key={d.value} onClick={() => setSelectedDate(d.value)}
                     className={`p-3 text-center text-xs border transition-all duration-200 ${
                       selectedDate === d.value
-                        ? 'bg-pub-gold text-pub-black border-pub-gold font-medium'
-                        : 'border-pub-gold/20 text-pub-cream/60 hover:border-pub-gold/50 hover:text-pub-cream'
+                        ? 'bg-pub-teal text-pub-black border-pub-teal font-medium'
+                        : 'border-pub-teal/20 text-pub-cream/60 hover:border-pub-teal/50 hover:text-pub-cream'
                     }`}>
                     {d.label}
                   </button>
@@ -175,9 +170,9 @@ export default function ReservationSection() {
                       <button key={slot.id} disabled={isFull}
                         onClick={() => setSelectedSlot(slot)}
                         className={`px-6 py-3 text-sm border transition-all duration-200 ${
-                          isSelected ? 'bg-pub-gold text-pub-black border-pub-gold'
+                          isSelected ? 'bg-pub-teal text-pub-black border-pub-teal'
                           : isFull ? 'border-pub-cream/10 text-pub-cream/20 cursor-not-allowed'
-                          : 'border-pub-gold/30 text-pub-cream hover:border-pub-gold'
+                          : 'border-pub-teal/30 text-pub-cream hover:border-pub-teal'
                         }`}>
                         <div className="font-display tracking-wider">{slot.slotTime.slice(0,5)}</div>
                         <div className="text-[10px] mt-0.5 opacity-70">
@@ -228,14 +223,14 @@ export default function ReservationSection() {
         .form-input {
           width: 100%;
           background: transparent;
-          border: 1px solid rgba(201,168,76,0.3);
+          border: 1px solid rgba(94,144,156,0.3);
           color: #f5f0e8;
           padding: 0.75rem 1rem;
           font-size: 0.875rem;
           transition: border-color 0.2s;
           outline: none;
         }
-        .form-input:focus { border-color: #c9a84c; }
+        .form-input:focus { border-color: #5e909c; }
         .form-input::placeholder { color: rgba(245,240,232,0.3); }
       `}</style>
     </section>
@@ -245,9 +240,9 @@ export default function ReservationSection() {
 function StepLabel({ n, label }: { n: number; label: string }) {
   return (
     <div className="flex items-center gap-3 mb-2">
-      <div className="w-7 h-7 rounded-full border border-pub-gold text-pub-gold flex items-center justify-center
+      <div className="w-7 h-7 rounded-full border border-pub-teal text-pub-teal flex items-center justify-center
                       text-xs font-display">{n}</div>
-      <span className="font-display text-pub-gold text-sm tracking-widest uppercase">{label}</span>
+      <span className="font-display text-pub-teal text-sm tracking-widest uppercase">{label}</span>
     </div>
   )
 }

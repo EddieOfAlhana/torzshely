@@ -26,14 +26,12 @@ export default function EventsSection() {
 
   return (
     <section id="events" className="relative py-24 md:py-32 overflow-hidden">
-      {/* Parallax background */}
       <div className="parallax-bg absolute inset-0"
            style={{ backgroundImage: 'url(/generated/whisky-bg.jpg)' }}>
         <div className="absolute inset-0 bg-pub-black/88" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Title */}
         <div ref={titleRef} className="text-center mb-16">
           <h2 className="section-title">{t('events.title')}</h2>
           <p className="section-subtitle">{t('events.subtitle')}</p>
@@ -50,7 +48,6 @@ export default function EventsSection() {
           </div>
         )}
 
-        {/* Facebook link */}
         <div className="text-center mt-12">
           <a href="https://facebook.com/torzshely16" target="_blank" rel="noopener noreferrer"
              className="btn-outline">
@@ -77,29 +74,26 @@ function EventFlipCard({ event, isHu, delay, t }: {
     <div ref={ref} className="flip-card h-72" style={{ transitionDelay: `${delay}s` }}>
       <div className="flip-card-inner w-full h-full">
         {/* Front */}
-        <div className="flip-card-front w-full h-full bg-pub-dark border border-pub-gold/20 p-6 flex flex-col justify-between
-                        hover:border-pub-gold/50 transition-colors">
-          {/* Category badge */}
+        <div className="flip-card-front w-full h-full bg-pub-dark border border-pub-teal/20 p-6 flex flex-col justify-between
+                        hover:border-pub-teal/50 transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-3xl">{icon}</span>
             {event.featured && (
-              <span className="text-[10px] font-display tracking-wider text-pub-gold border border-pub-gold/40 px-2 py-1">
+              <span className="text-[10px] font-display tracking-wider text-pub-teal border border-pub-teal/40 px-2 py-1">
                 KIEMELT
               </span>
             )}
           </div>
 
-          {/* Date */}
           <div>
-            <div className="text-pub-gold/60 text-xs font-display tracking-widest uppercase mb-1">{dateStr}</div>
-            <div className="font-display text-pub-gold text-sm tracking-widest">{timeStr}</div>
+            <div className="text-pub-teal/60 text-xs font-display tracking-widest uppercase mb-1">{dateStr}</div>
+            <div className="font-display text-pub-teal text-sm tracking-widest">{timeStr}</div>
           </div>
 
-          {/* Title */}
           <div>
             <h3 className="font-serif text-pub-cream text-lg leading-snug mb-2">{title}</h3>
             {event.priceHuf ? (
-              <div className="text-pub-gold text-sm">
+              <div className="text-pub-teal text-sm">
                 {event.priceHuf.toLocaleString('hu-HU')} Ft{t('events.per_person')}
               </div>
             ) : (
@@ -111,7 +105,8 @@ function EventFlipCard({ event, isHu, delay, t }: {
         </div>
 
         {/* Back */}
-        <div className="flip-card-back w-full h-full bg-pub-gold p-6 flex flex-col justify-between">
+        <div className="flip-card-back w-full h-full p-6 flex flex-col justify-between"
+             style={{ backgroundColor: '#5e909c' }}>
           <div>
             <h3 className="font-display text-pub-black text-base tracking-widest uppercase mb-4">{title}</h3>
             <p className="text-pub-dark text-sm leading-relaxed line-clamp-6">{desc}</p>
@@ -126,7 +121,7 @@ function EventFlipCard({ event, isHu, delay, t }: {
               </div>
             )}
             <a href="https://facebook.com/torzshely16" target="_blank" rel="noopener noreferrer"
-               className="inline-block bg-pub-black text-pub-gold text-xs py-2 px-4 font-display tracking-widest
+               className="inline-block bg-pub-black text-pub-teal text-xs py-2 px-4 font-display tracking-widest
                           hover:bg-pub-dark transition-colors mt-2">
               {t('events.register')} →
             </a>

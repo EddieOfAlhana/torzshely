@@ -26,7 +26,6 @@ export default function ContactSection() {
   const titleRef = useScrollAnimation()
   const isHu = i18n.language === 'hu'
 
-  // Today's day: JS Sunday=0, our system Mon=1..Sun=7
   const todayDow = new Date().getDay() === 0 ? 7 : new Date().getDay()
 
   const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm<ContactForm>()
@@ -47,10 +46,7 @@ export default function ContactSection() {
     }
   }
 
-  const dayName = (dow: number) => {
-    const key = `contact.days.${dow}` as const
-    return t(key)
-  }
+  const dayName = (dow: number) => t(`contact.days.${dow}` as const)
 
   return (
     <section id="contact" className="py-24 md:py-32 bg-pub-black">
@@ -64,7 +60,6 @@ export default function ContactSection() {
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Left: Info + Hours */}
           <div className="space-y-10">
-            {/* Contact info */}
             <div className="space-y-4">
               <InfoRow icon="📍" text={t('contact.address')} href={`https://maps.google.com/?q=Thököly+út+7b,+Budapest`} />
               <InfoRow icon="📞" text={t('contact.phone')} href="tel:+36303839818" />
@@ -73,7 +68,7 @@ export default function ContactSection() {
 
             {/* Opening hours */}
             <div>
-              <h3 className="font-display text-pub-gold text-sm tracking-[0.3em] uppercase mb-6">
+              <h3 className="font-display text-pub-teal text-sm tracking-[0.3em] uppercase mb-6">
                 {t('contact.hours_title')}
               </h3>
               <div className="space-y-2">
@@ -83,15 +78,15 @@ export default function ContactSection() {
                     <div key={h.dayOfWeek}
                          className={`flex justify-between items-center py-2 border-b transition-colors
                            ${isToday
-                             ? 'border-pub-gold/40 bg-pub-gold/5 px-3'
+                             ? 'border-pub-teal/40 bg-pub-teal/5 px-3'
                              : 'border-pub-cream/5'}`}>
-                      <span className={`text-sm ${isToday ? 'text-pub-gold font-medium' : 'text-pub-cream/60'}`}>
+                      <span className={`text-sm ${isToday ? 'text-pub-teal font-medium' : 'text-pub-cream/60'}`}>
                         {dayName(h.dayOfWeek)}
-                        {isToday && <span className="ml-2 text-[10px] bg-pub-gold text-pub-black px-1.5 py-0.5 tracking-wider">
+                        {isToday && <span className="ml-2 text-[10px] bg-pub-teal text-pub-black px-1.5 py-0.5 tracking-wider">
                           {t('contact.today')}
                         </span>}
                       </span>
-                      <span className={`text-sm font-display tracking-wider ${isToday ? 'text-pub-gold' : 'text-pub-cream/50'}`}>
+                      <span className={`text-sm font-display tracking-wider ${isToday ? 'text-pub-teal' : 'text-pub-teal/70'}`}>
                         {h.closed ? t('contact.closed') : `${h.openTime} – ${h.closeTime}`}
                       </span>
                     </div>
@@ -105,7 +100,7 @@ export default function ContactSection() {
 
             {/* Social */}
             <div>
-              <h3 className="font-display text-pub-gold text-sm tracking-[0.3em] uppercase mb-4">
+              <h3 className="font-display text-pub-teal text-sm tracking-[0.3em] uppercase mb-4">
                 {t('contact.follow')}
               </h3>
               <div className="flex gap-4">
@@ -119,8 +114,7 @@ export default function ContactSection() {
 
           {/* Right: Map + Form */}
           <div className="space-y-8">
-            {/* Google Maps */}
-            <div className="aspect-video border border-pub-gold/20 overflow-hidden">
+            <div className="aspect-video border border-pub-teal/20 overflow-hidden">
               <iframe
                 src={GOOGLE_MAPS_EMBED}
                 width="100%" height="100%"
@@ -131,9 +125,8 @@ export default function ContactSection() {
               />
             </div>
 
-            {/* Contact form */}
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 border border-pub-gold/20 p-8">
-              <h3 className="font-display text-pub-gold text-sm tracking-[0.3em] uppercase mb-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 border border-pub-teal/20 p-8">
+              <h3 className="font-display text-pub-teal text-sm tracking-[0.3em] uppercase mb-6">
                 {isHu ? 'Írj nekünk' : 'Send us a message'}
               </h3>
               <div className="grid sm:grid-cols-2 gap-5">
@@ -164,11 +157,11 @@ export default function ContactSection() {
       <style>{`
         .form-input {
           width: 100%; background: transparent;
-          border: 1px solid rgba(201,168,76,0.3); color: #f5f0e8;
+          border: 1px solid rgba(94,144,156,0.35); color: #f5f0e8;
           padding: 0.75rem 1rem; font-size: 0.875rem;
           transition: border-color 0.2s; outline: none;
         }
-        .form-input:focus { border-color: #c9a84c; }
+        .form-input:focus { border-color: #5e909c; }
         .form-input::placeholder { color: rgba(245,240,232,0.3); }
       `}</style>
     </section>
@@ -179,7 +172,7 @@ function InfoRow({ icon, text, href }: { icon: string; text: string; href?: stri
   const content = (
     <div className="flex items-start gap-4 group">
       <span className="text-xl flex-shrink-0 mt-0.5">{icon}</span>
-      <span className="text-pub-cream/70 group-hover:text-pub-gold transition-colors text-sm">{text}</span>
+      <span className="text-pub-cream/70 group-hover:text-pub-teal transition-colors text-sm">{text}</span>
     </div>
   )
   return href ? <a href={href} target="_blank" rel="noopener noreferrer">{content}</a> : content

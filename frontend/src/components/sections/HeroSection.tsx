@@ -6,7 +6,6 @@ export default function HeroSection() {
   const { t } = useTranslation()
   const bgRef = useRef<HTMLDivElement>(null)
 
-  // Parallax scroll for hero background
   useEffect(() => {
     const handleScroll = () => {
       if (bgRef.current) {
@@ -28,12 +27,10 @@ export default function HeroSection() {
            style={{ top: '-20%', height: '140%' }}>
         <img src="/generated/hero-bg.jpg" alt="Törzshely 16 bár belső"
              className="w-full h-full object-cover" />
-        {/* Dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-pub-black/60 via-pub-black/40 to-pub-black" />
         <div className="absolute inset-0 bg-gradient-to-r from-pub-black/60 via-transparent to-pub-black/30" />
       </div>
 
-      {/* Animated golden particles */}
       <GoldenParticles />
 
       {/* Content */}
@@ -44,7 +41,7 @@ export default function HeroSection() {
         </div>
 
         <div className="overflow-hidden mb-4">
-          <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-pub-gold tracking-widest uppercase
+          <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-pub-teal tracking-widest uppercase
                         animate-[fadeUp_1s_0.2s_ease_forwards] opacity-0">
             TÖRZSHELY 16
           </h1>
@@ -76,10 +73,10 @@ export default function HeroSection() {
 
         {/* Rating badge */}
         <div className="mt-12 flex justify-center animate-[fadeIn_1s_1.2s_ease_forwards] opacity-0">
-          <div className="flex items-center gap-3 border border-pub-gold/30 px-6 py-3 bg-pub-black/40 backdrop-blur-sm">
+          <div className="flex items-center gap-3 border border-pub-teal/30 px-6 py-3 bg-pub-black/40 backdrop-blur-sm">
             <span className="text-pub-gold text-xl">★★★★★</span>
             <div className="text-left">
-              <div className="font-display text-pub-gold text-lg">
+              <div className="font-display text-pub-teal text-lg">
                 <CountUp end={4.9} decimals={1} duration={2} delay={1.2} />
               </div>
               <div className="text-pub-cream/50 text-xs tracking-widest">{t('hero.rating')}</div>
@@ -90,13 +87,12 @@ export default function HeroSection() {
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-px h-16 bg-gradient-to-b from-pub-gold to-transparent mx-auto" />
-        <div className="w-1.5 h-1.5 rounded-full bg-pub-gold mx-auto mt-1" />
+        <div className="w-px h-16 bg-gradient-to-b from-pub-teal to-transparent mx-auto" />
+        <div className="w-1.5 h-1.5 rounded-full bg-pub-teal mx-auto mt-1" />
       </div>
     </section>
   )
 }
-
 
 function GoldenParticles() {
   const particles = Array.from({ length: 20 }, (_, i) => ({
@@ -112,7 +108,7 @@ function GoldenParticles() {
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
       {particles.map(p => (
         <div key={p.id}
-          className="absolute rounded-full bg-pub-gold/30"
+          className="absolute rounded-full bg-pub-teal/20"
           style={{
             left: `${p.x}%`,
             top: `${p.y}%`,

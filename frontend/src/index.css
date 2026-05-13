@@ -17,7 +17,8 @@
   }
 
   ::selection {
-    @apply bg-pub-gold text-pub-black;
+    background-color: #5e909c;
+    color: #0d0804;
   }
 
   ::-webkit-scrollbar {
@@ -27,21 +28,47 @@
     @apply bg-pub-dark;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-pub-gold rounded-full;
+    background-color: #5e909c;
+    border-radius: 9999px;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center gap-2 px-8 py-3.5 bg-pub-gold text-pub-black font-semibold rounded-none
-           transition-all duration-300 hover:bg-pub-gold-light hover:scale-105
-           uppercase tracking-widest text-sm;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: #5e909c;
+    color: #0d0804;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 0;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+  .btn-primary:hover {
+    background-color: #7eb8c6;
+    transform: scale(1.05);
   }
 
   .btn-outline {
-    @apply inline-flex items-center gap-2 px-8 py-3.5 border border-pub-gold text-pub-gold font-semibold
-           transition-all duration-300 hover:bg-pub-gold hover:text-pub-black
-           uppercase tracking-widest text-sm;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    border: 1px solid #5e909c;
+    color: #5e909c;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  }
+  .btn-outline:hover {
+    background-color: #5e909c;
+    color: #0d0804;
   }
 
   .btn-teal {
@@ -63,7 +90,11 @@
   }
 
   .section-title {
-    @apply font-display text-4xl md:text-5xl lg:text-6xl text-pub-gold tracking-wider uppercase;
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: #5e909c;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
 
   .section-subtitle {
@@ -71,18 +102,24 @@
   }
 
   .gold-divider {
-    @apply w-24 h-px bg-pub-gold mx-auto my-6;
+    width: 6rem;
+    height: 1px;
+    background-color: #5e909c;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .card-hover {
-    @apply transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-pub-gold/20;
+    @apply transition-all duration-500 hover:scale-105 hover:shadow-2xl;
+    --tw-shadow-colored: 0 25px 50px -12px rgba(94,144,156,0.2);
   }
 
   .parallax-section {
     @apply relative overflow-hidden;
   }
 
-  /* Animate on scroll - initial state */
   .aos-init {
     opacity: 0;
     transform: translateY(40px);

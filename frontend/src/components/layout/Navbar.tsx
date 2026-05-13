@@ -52,7 +52,7 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center gap-8">
           {NAV_LINKS.map(link => (
             <button key={link.key} onClick={() => handleNav(link.href)}
-              className="text-pub-cream/70 hover:text-pub-teal transition-colors duration-300 text-xs uppercase tracking-widest font-medium">
+              className="text-pub-teal/70 hover:text-pub-teal transition-colors duration-300 text-xs uppercase tracking-widest font-medium">
               {t(`nav.${link.key}`)}
             </button>
           ))}
@@ -62,18 +62,18 @@ export default function Navbar() {
         <div className="flex items-center gap-4">
           {/* Language toggle */}
           <button onClick={toggleLang}
-            className="text-xs font-display tracking-widest text-pub-cream/60 hover:text-pub-gold transition-colors border border-pub-cream/20 px-3 py-1.5 hover:border-pub-gold">
+            className="text-xs font-display tracking-widest text-pub-teal/60 hover:text-pub-teal transition-colors border border-pub-teal/20 px-3 py-1.5 hover:border-pub-teal">
             {lang === 'hu' ? 'EN' : 'HU'}
           </button>
 
-          {/* Reservation CTA */}
+          {/* Reservation CTA – gold accent */}
           <button onClick={() => handleNav('#reservation')}
             className="hidden md:block btn-primary text-xs py-2.5 px-6">
             {t('nav.reservation')}
           </button>
 
           {/* Hamburger */}
-          <button onClick={() => setOpen(!open)} className="lg:hidden p-2 text-pub-gold">
+          <button onClick={() => setOpen(!open)} className="lg:hidden p-2 text-pub-teal">
             <div className={`w-6 h-0.5 bg-current mb-1.5 transition-all ${open ? 'rotate-45 translate-y-2' : ''}`} />
             <div className={`w-6 h-0.5 bg-current mb-1.5 transition-all ${open ? 'opacity-0' : ''}`} />
             <div className={`w-6 h-0.5 bg-current transition-all ${open ? '-rotate-45 -translate-y-2' : ''}`} />
@@ -83,10 +83,10 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       <div className={`lg:hidden transition-all duration-300 overflow-hidden ${open ? 'max-h-screen' : 'max-h-0'}`}>
-        <div className="bg-pub-dark/98 backdrop-blur-md border-t border-pub-gold/20 px-4 py-6 space-y-4">
+        <div className="bg-pub-dark/98 backdrop-blur-md border-t border-pub-teal/20 px-4 py-6 space-y-4">
           {NAV_LINKS.map(link => (
             <button key={link.key} onClick={() => handleNav(link.href)}
-              className="block w-full text-left text-pub-cream/80 hover:text-pub-gold py-2 text-sm uppercase tracking-widest font-medium transition-colors">
+              className="block w-full text-left text-pub-teal/80 hover:text-pub-teal py-2 text-sm uppercase tracking-widest font-medium transition-colors">
               {t(`nav.${link.key}`)}
             </button>
           ))}
@@ -95,4 +95,3 @@ export default function Navbar() {
     </nav>
   )
 }
-

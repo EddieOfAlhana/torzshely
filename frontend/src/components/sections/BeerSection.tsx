@@ -4,8 +4,6 @@ import { useScrollAnimation } from '../../hooks/useScrollAnimation'
 import api from '../../services/api'
 import type { MenuCategory, MenuItem } from '../../types'
 
-// Preset color map – stored as ID in DB, mapped to CSS here at build time
-// Custom hex colors (e.g. "#33aa44") are handled separately in getColor()
 export const BEER_COLORS: Record<string, { gradient: string; foam: string; label: string }> = {
   gold:   { gradient: 'linear-gradient(to bottom, #f59e0b, #fbbf24, #fde68a)', foam: 'rgba(255,255,255,0.85)', label: 'Arany' },
   copper: { gradient: 'linear-gradient(to bottom, #b45309, #d97706, #f59e0b)', foam: 'rgba(255,255,255,0.80)', label: 'Rézes' },
@@ -20,7 +18,6 @@ export const BEER_COLORS: Record<string, { gradient: string; foam: string; label
 function getColor(colorKey: string | undefined) {
   if (!colorKey) return BEER_COLORS.gold
   if (BEER_COLORS[colorKey]) return BEER_COLORS[colorKey]
-  // Custom hex color
   if (colorKey.startsWith('#')) {
     return {
       gradient: `linear-gradient(to bottom, ${colorKey}cc, ${colorKey}, ${colorKey}88)`,
@@ -30,8 +27,6 @@ function getColor(colorKey: string | undefined) {
   }
   return BEER_COLORS.gold
 }
-
-const DEFAULT_COLOR = 'gold'
 
 export default function BeerSection() {
   const { t } = useTranslation()
@@ -61,7 +56,7 @@ export default function BeerSection() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
         <div ref={titleRef} className="text-center mb-16">
-          <div className="font-display text-pub-gold/50 text-sm tracking-[0.5em] uppercase mb-3">
+          <div className="font-display text-pub-teal/50 text-sm tracking-[0.5em] uppercase mb-3">
             Sör kisokos
           </div>
           <h2 className="section-title">{t('beers.title')}</h2>
@@ -71,7 +66,7 @@ export default function BeerSection() {
 
         {loading ? (
           <div className="flex justify-center py-12">
-            <div className="w-8 h-8 border-2 border-pub-gold/40 border-t-pub-gold rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-pub-teal/40 border-t-pub-teal rounded-full animate-spin" />
           </div>
         ) : (
           <div className={`grid gap-8 ${beers.length <= 2 ? 'md:grid-cols-2 max-w-3xl mx-auto' : beers.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2 lg:grid-cols-4'}`}>
@@ -91,17 +86,15 @@ function BeerCard({ beer, delay }: { beer: MenuItem; delay: number }) {
   const abv = beer.abv ?? null
 
   return (
-    <div ref={ref} className="group relative overflow-hidden border border-pub-gold/20
-                              hover:border-pub-gold/60 transition-all duration-500
-                              hover:shadow-2xl hover:shadow-pub-gold/20"
+    <div ref={ref} className="group relative overflow-hidden border border-pub-teal/20
+                              hover:border-pub-teal/60 transition-all duration-500
+                              hover:shadow-2xl hover:shadow-pub-teal/20"
          style={{ transitionDelay: `${delay}s` }}>
       {/* Beer visual */}
       <div className="h-48 flex items-end justify-center pb-4 relative overflow-hidden"
            style={{ background: color.gradient }}>
-        {/* Foam head */}
         <div className="absolute top-0 left-0 right-0 h-10 rounded-b-full"
              style={{ backgroundColor: color.foam }} />
-        {/* Bubbles */}
         {[...Array(7)].map((_, i) => (
           <div key={i} className="absolute bottom-0 rounded-full"
                style={{
@@ -128,12 +121,12 @@ function BeerCard({ beer, delay }: { beer: MenuItem; delay: number }) {
       </div>
 
       <div className="p-6 bg-pub-dark">
-        <h3 className="font-serif text-pub-gold text-xl mb-3">{beer.nameHu}</h3>
+        <h3 className="font-serif text-pub-teal text-xl mb-3">{beer.nameHu}</h3>
         {beer.descriptionHu && (
           <p className="text-pub-cream/60 text-sm leading-relaxed mb-4">{beer.descriptionHu}</p>
         )}
-        <div className="flex items-center justify-between pt-4 border-t border-pub-gold/20">
-          <span className="font-display text-pub-gold-light text-sm tracking-wider">
+        <div className="flex items-center justify-between pt-4 border-t border-pub-teal/20">
+          <span className="font-display text-pub-teal text-sm tracking-wider">
             {beer.priceHuf ? `${beer.priceHuf.toLocaleString('hu-HU')} Ft` : '–'}
             {beer.priceNote && <span className="text-pub-cream/50 text-xs ml-1">/ {beer.priceNote}</span>}
           </span>

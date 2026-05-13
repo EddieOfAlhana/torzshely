@@ -6,7 +6,6 @@ import { useScrollAnimation } from '../../hooks/useScrollAnimation'
 import api from '../../services/api'
 import type { GalleryPhoto } from '../../types'
 
-// Static photos from the pub's actual photos folder – used as fallback / initial gallery
 const STATIC_PHOTOS = [
   { imageUrl: '/photos/657748630_122132045445111926_5015930608990045577_n.jpg', category: 'interior' },
   { imageUrl: '/photos/648245398_122129016117111926_4537042826914534387_n.jpg', category: 'terrace' },
@@ -50,7 +49,6 @@ export default function GallerySection() {
   return (
     <section id="gallery" className="py-24 md:py-32 bg-pub-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Title */}
         <div ref={titleRef} className="text-center mb-12">
           <h2 className="section-title">{t('gallery.title')}</h2>
           <p className="section-subtitle">{t('gallery.subtitle')}</p>
@@ -63,14 +61,14 @@ export default function GallerySection() {
             <button key={cat} onClick={() => setFilter(cat)}
               className={`text-xs font-display tracking-widest uppercase px-5 py-2 transition-all duration-300
                          border ${filter === cat
-                          ? 'bg-pub-gold text-pub-black border-pub-gold'
-                          : 'border-pub-gold/30 text-pub-cream/60 hover:border-pub-gold hover:text-pub-gold'}`}>
+                          ? 'text-pub-black border-pub-teal'
+                          : 'border-pub-teal/30 text-pub-cream/60 hover:border-pub-teal hover:text-pub-teal'}`}
+              style={filter === cat ? { backgroundColor: '#5e909c' } : undefined}>
               {t(`gallery.categories.${cat}`)}
             </button>
           ))}
         </div>
 
-        {/* Masonry-ish grid */}
         <div className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
           {filtered.map((photo, idx) => (
             <GalleryItem key={photo.id} photo={photo} idx={idx}
@@ -79,7 +77,6 @@ export default function GallerySection() {
         </div>
       </div>
 
-      {/* Lightbox */}
       <Lightbox
         open={lightboxIdx >= 0}
         close={() => setLightboxIdx(-1)}
@@ -103,7 +100,7 @@ function GalleryItem({ photo, idx, onClick }: {
       <img src={photo.imageUrl} alt={photo.captionHu || 'Törzshely 16'}
            className="w-full h-auto transition-transform duration-700 group-hover:scale-110"
            loading="lazy" />
-      <div className="absolute inset-0 bg-pub-gold/0 group-hover:bg-pub-gold/20 transition-all duration-500
+      <div className="absolute inset-0 bg-pub-teal/0 group-hover:bg-pub-teal/25 transition-all duration-500
                       flex items-center justify-center">
         <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-3xl">+</span>
       </div>

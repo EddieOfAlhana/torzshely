@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
     List<MenuItem> findByCategoryIdAndActiveTrueOrderBySortOrderAsc(Long categoryId);
+    List<MenuItem> findByCategoryIdOrderBySortOrderAsc(Long categoryId);
     List<MenuItem> findByFeaturedTrueAndActiveTrueOrderBySortOrderAsc();
 }

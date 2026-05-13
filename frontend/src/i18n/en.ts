@@ -31,6 +31,10 @@ const en = {
   ticker: {
     label: 'Upcoming events',
   },
+  beers: {
+    title: 'Our Draft Beers',
+    subtitle: 'A unique selection in the district',
+  },
   menu: {
     title: 'Our Menu',
     subtitle: 'Food & Drinks',

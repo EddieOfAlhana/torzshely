@@ -38,9 +38,9 @@ export default function HeroSection() {
 
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-        {/* Logo SVG large */}
+        {/* Logo */}
         <div className="flex justify-center mb-8 animate-fade-in">
-          <LogoLarge />
+          <img src="/logo.png" alt="Törzshely logó" className="h-40 md:h-48 w-auto" />
         </div>
 
         <div className="overflow-hidden mb-4">
@@ -69,7 +69,7 @@ export default function HeroSection() {
           <button onClick={() => scrollTo('#reservation')} className="btn-primary text-sm">
             {t('hero.cta_reservation')}
           </button>
-          <button onClick={() => scrollTo('#events')} className="btn-outline text-sm">
+          <button onClick={() => scrollTo('#events')} className="btn-teal text-sm">
             {t('hero.cta_events')}
           </button>
         </div>
@@ -97,31 +97,6 @@ export default function HeroSection() {
   )
 }
 
-function LogoLarge() {
-  return (
-    <svg width="120" height="120" viewBox="0 0 120 120">
-      <circle cx="60" cy="60" r="55" fill="none" stroke="#c9a84c" strokeWidth="1.5" />
-      <circle cx="60" cy="60" r="47" fill="none" stroke="#c9a84c" strokeWidth="0.5" />
-      <circle cx="60" cy="60" r="40" fill="rgba(201,168,76,0.05)" />
-      {/* Decorative lines */}
-      <line x1="10" y1="60" x2="28" y2="60" stroke="#c9a84c" strokeWidth="0.8" />
-      <line x1="92" y1="60" x2="110" y2="60" stroke="#c9a84c" strokeWidth="0.8" />
-      <circle cx="10" cy="60" r="1.5" fill="#c9a84c" />
-      <circle cx="110" cy="60" r="1.5" fill="#c9a84c" />
-      {/* Wheat/hop motif top */}
-      <path d="M55 28 Q60 22 65 28 Q60 34 55 28Z" fill="#c9a84c" opacity="0.7" />
-      <path d="M55 34 Q60 28 65 34 Q60 40 55 34Z" fill="#c9a84c" opacity="0.5" />
-      <line x1="60" y1="22" x2="60" y2="45" stroke="#c9a84c" strokeWidth="0.5" />
-      {/* Text */}
-      <text x="60" y="58" textAnchor="middle" fontFamily="Cinzel, serif"
-            fontSize="13" fill="#c9a84c" letterSpacing="3" fontWeight="600">TÖRZS</text>
-      <text x="60" y="72" textAnchor="middle" fontFamily="Cinzel, serif"
-            fontSize="10" fill="#c9a84c" letterSpacing="2">HELY 16</text>
-      {/* Bottom ornament */}
-      <path d="M45 84 Q60 90 75 84" fill="none" stroke="#c9a84c" strokeWidth="0.8" />
-    </svg>
-  )
-}
 
 function GoldenParticles() {
   const particles = Array.from({ length: 20 }, (_, i) => ({

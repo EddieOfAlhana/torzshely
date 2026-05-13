@@ -1,6 +1,6 @@
 package hu.torzshely.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +11,7 @@ public class MenuItem {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private MenuCategory category;
@@ -31,4 +31,6 @@ public class MenuItem {
     private Integer sortOrder = 0;
     private Boolean active = true;
     private Boolean featured = false;
+    private String color;
+    private String abv;
 }

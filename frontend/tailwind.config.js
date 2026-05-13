@@ -13,7 +13,9 @@ export default {
           'gold-light': '#e8c97a',
           cream:   '#f5f0e8',
           white:   '#ffffff',
-          blue:    '#4a9ab5',
+          teal:        '#5e909c',
+          'teal-light': '#7eb8c6',
+          'teal-dark':  '#3d6b75',
         }
       },
       fontFamily: {

@@ -44,6 +44,24 @@
            uppercase tracking-widest text-sm;
   }
 
+  .btn-teal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    border: 1px solid #5e909c;
+    color: #5e909c;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  .btn-teal:hover {
+    background-color: #5e909c;
+    color: #0d0804;
+  }
+
   .section-title {
     @apply font-display text-4xl md:text-5xl lg:text-6xl text-pub-gold tracking-wider uppercase;
   }

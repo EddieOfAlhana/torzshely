@@ -42,15 +42,35 @@ public class ReservationController {
     public ResponseEntity<?> book(@Valid @RequestBody ReservationRequest req) {
         ReservationSlot slot = slotRepo.findById(req.getSlotId())
                 .orElseThrow(() -> new RuntimeException("Slot not found"));
-        if (slot.available() < req.getPartySize()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Nem áll rendelkezésre elegendő szabad hely erre az időpontra."));
+
+        Reservation.SeatingArea area;
+        try {
+            area = Reservation.SeatingArea.valueOf(req.getSeatingArea());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Érvénytelen helyszín-választás."));
         }
+
+        int available = area == Reservation.SeatingArea.INDOOR
+                ? slot.availableIndoor()
+                : slot.availableOutdoor();
+
+        if (available < req.getPartySize()) {
+            return ResponseEntity.badRequest().body(
+                Map.of("error", "Nem áll rendelkezésre elegendő szabad hely erre az időpontra."));
+        }
+
+        if (area == Reservation.SeatingArea.INDOOR) {
+            slot.setBookedIndoor(slot.getBookedIndoor() + req.getPartySize());
+        } else {
+            slot.setBookedOutdoor(slot.getBookedOutdoor() + req.getPartySize());
+        }
+        slot.setBooked(slot.getBooked() + req.getPartySize());
+        slotRepo.save(slot);
+
         Reservation r = Reservation.builder()
                 .slot(slot).guestName(req.getGuestName()).phone(req.getPhone())
                 .email(req.getEmail()).partySize(req.getPartySize()).notes(req.getNotes())
-                .status(Reservation.Status.PENDING).build();
-        slot.setBooked(slot.getBooked() + req.getPartySize());
-        slotRepo.save(slot);
+                .seatingArea(area).status(Reservation.Status.PENDING).build();
         Reservation saved = reservationRepo.save(r);
         emailService.sendReservationConfirmation(saved);
         emailService.sendReservationNotification(saved);
@@ -74,6 +94,11 @@ public class ReservationController {
             Reservation.Status newStatus = Reservation.Status.valueOf(body.get("status"));
             if (newStatus == Reservation.Status.REJECTED && r.getStatus() == Reservation.Status.PENDING) {
                 ReservationSlot slot = r.getSlot();
+                if (r.getSeatingArea() == Reservation.SeatingArea.INDOOR) {
+                    slot.setBookedIndoor(Math.max(0, slot.getBookedIndoor() - r.getPartySize()));
+                } else if (r.getSeatingArea() == Reservation.SeatingArea.OUTDOOR) {
+                    slot.setBookedOutdoor(Math.max(0, slot.getBookedOutdoor() - r.getPartySize()));
+                }
                 slot.setBooked(Math.max(0, slot.getBooked() - r.getPartySize()));
                 slotRepo.save(slot);
             }
@@ -86,6 +111,7 @@ public class ReservationController {
 
     @PostMapping("/slots")
     public ReservationSlot createSlot(@RequestBody ReservationSlot slot) {
+        slot.setCapacity(slot.getIndoorCapacity() + slot.getOutdoorCapacity());
         return slotRepo.save(slot);
     }
 

@@ -10,17 +10,25 @@ import { useScrollAnimation } from '../../hooks/useScrollAnimation'
 import api from '../../services/api'
 import type { ReservationSlot } from '../../types'
 
+type SeatingArea = 'INDOOR' | 'OUTDOOR'
+
 const schema = z.object({
   guestName: z.string().min(2),
   phone: z.string().min(6),
   email: z.string().email().or(z.literal('')).optional(),
-  partySize: z.number().min(1).max(20),
+  partySize: z.number().min(1).max(30),
   notes: z.string().optional(),
 })
 type FormData = z.infer<typeof schema>
 
+const AREA_CONFIG = {
+  INDOOR: { labelHu: 'Belső terem', labelEn: 'Indoor', icon: '🏠', capacity: 28, descHu: '28 férőhely', descEn: '28 seats' },
+  OUTDOOR: { labelHu: 'Kültéri terasz', labelEn: 'Outdoor terrace', icon: '🌿', capacity: 15, descHu: '15 férőhely', descEn: '15 seats' },
+}
+
 export default function ReservationSection() {
   const { t, i18n } = useTranslation()
+  const [selectedArea, setSelectedArea] = useState<SeatingArea | null>(null)
   const [selectedDate, setSelectedDate] = useState<string>('')
   const [slots, setSlots] = useState<ReservationSlot[]>([])
   const [selectedSlot, setSelectedSlot] = useState<ReservationSlot | null>(null)
@@ -29,7 +37,6 @@ export default function ReservationSection() {
   const titleRef = useScrollAnimation()
   const isHu = i18n.language === 'hu'
 
-  // Generate next 14 days
   const today = startOfToday()
   const dates = Array.from({ length: 14 }, (_, i) => {
     const d = addDays(today, i + 1)
@@ -48,15 +55,21 @@ export default function ReservationSection() {
       .catch(() => setSlots([]))
   }, [selectedDate])
 
+  const getAvailable = (slot: ReservationSlot, area: SeatingArea) =>
+    area === 'INDOOR'
+      ? (slot.indoorCapacity ?? 28) - (slot.bookedIndoor ?? 0)
+      : (slot.outdoorCapacity ?? 15) - (slot.bookedOutdoor ?? 0)
+
   const onSubmit = async (data: FormData) => {
-    if (!selectedSlot) { toast.error(isHu ? 'Kérlek válassz időpontot!' : 'Please select a time slot!'); return }
+    if (!selectedSlot || !selectedArea) { toast.error(isHu ? 'Kérlek válassz időpontot!' : 'Please select a time slot!'); return }
     setLoading(true)
     try {
-      await api.post('/reservations', { ...data, slotId: selectedSlot.id })
+      await api.post('/reservations', { ...data, slotId: selectedSlot.id, seatingArea: selectedArea })
       setSuccess(true)
       reset()
       setSelectedDate('')
       setSelectedSlot(null)
+      setSelectedArea(null)
       toast.success(t('reservation.success'))
     } catch {
       toast.error(t('reservation.error'))
@@ -90,33 +103,72 @@ export default function ReservationSection() {
         </div>
 
         <div className="border border-pub-gold/20 p-8 md:p-12">
-          {/* Step 1: Date */}
+
+          {/* Step 1: Seating area */}
           <div className="mb-10">
-            <StepLabel n={1} label={t('reservation.pick_date')} />
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 mt-4">
-              {dates.map(d => (
-                <button key={d.value} onClick={() => setSelectedDate(d.value)}
-                  className={`p-3 text-center text-xs border transition-all duration-200 ${
-                    selectedDate === d.value
-                      ? 'bg-pub-gold text-pub-black border-pub-gold font-medium'
-                      : 'border-pub-gold/20 text-pub-cream/60 hover:border-pub-gold/50 hover:text-pub-cream'
-                  }`}>
-                  {d.label}
-                </button>
-              ))}
+            <StepLabel n={1} label={isHu ? 'Helyszín választás' : 'Choose seating area'} />
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              {(Object.entries(AREA_CONFIG) as [SeatingArea, typeof AREA_CONFIG.INDOOR][]).map(([key, cfg]) => {
+                const isTeal = key === 'OUTDOOR'
+                const isSelected = selectedArea === key
+                return (
+                  <button key={key} onClick={() => { setSelectedArea(key); setSelectedSlot(null) }}
+                    className={`p-5 text-left border transition-all duration-200 ${
+                      isSelected
+                        ? isTeal
+                          ? 'bg-pub-teal/10 border-pub-teal text-pub-cream'
+                          : 'bg-pub-gold/10 border-pub-gold text-pub-cream'
+                        : isTeal
+                          ? 'border-pub-teal/20 text-pub-cream/60 hover:border-pub-teal/50 hover:text-pub-cream'
+                          : 'border-pub-gold/20 text-pub-cream/60 hover:border-pub-gold/50 hover:text-pub-cream'
+                    }`}>
+                    <div className="text-2xl mb-2">{cfg.icon}</div>
+                    <div className="font-display tracking-wider text-sm mb-1">
+                      {isHu ? cfg.labelHu : cfg.labelEn}
+                    </div>
+                    <div className="text-xs opacity-60">
+                      {isHu ? cfg.descHu : cfg.descEn}
+                    </div>
+                    {isSelected && (
+                      <div className={`text-xs mt-2 font-display tracking-widest ${isTeal ? 'text-pub-teal' : 'text-pub-gold'}`}>
+                        ✓ KIVÁLASZTVA
+                      </div>
+                    )}
+                  </button>
+                )
+              })}
             </div>
           </div>
 
-          {/* Step 2: Time */}
-          {selectedDate && (
+          {/* Step 2: Date */}
+          {selectedArea && (
             <div className="mb-10">
-              <StepLabel n={2} label={t('reservation.pick_time')} />
+              <StepLabel n={2} label={t('reservation.pick_date')} />
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 mt-4">
+                {dates.map(d => (
+                  <button key={d.value} onClick={() => setSelectedDate(d.value)}
+                    className={`p-3 text-center text-xs border transition-all duration-200 ${
+                      selectedDate === d.value
+                        ? 'bg-pub-gold text-pub-black border-pub-gold font-medium'
+                        : 'border-pub-gold/20 text-pub-cream/60 hover:border-pub-gold/50 hover:text-pub-cream'
+                    }`}>
+                    {d.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Time */}
+          {selectedDate && selectedArea && (
+            <div className="mb-10">
+              <StepLabel n={3} label={t('reservation.pick_time')} />
               {slots.length === 0 ? (
                 <p className="text-pub-cream/40 text-sm mt-4">{t('reservation.no_slots')}</p>
               ) : (
                 <div className="flex flex-wrap gap-3 mt-4">
                   {slots.map(slot => {
-                    const avail = slot.capacity - slot.booked
+                    const avail = getAvailable(slot, selectedArea)
                     const isFull = avail <= 0
                     const isSelected = selectedSlot?.id === slot.id
                     return (
@@ -139,10 +191,10 @@ export default function ReservationSection() {
             </div>
           )}
 
-          {/* Step 3: Guest info */}
-          {selectedSlot && (
+          {/* Step 4: Guest info */}
+          {selectedSlot && selectedArea && (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <StepLabel n={3} label={isHu ? 'Személyes adatok' : 'Your details'} />
+              <StepLabel n={4} label={isHu ? 'Személyes adatok' : 'Your details'} />
               <div className="grid md:grid-cols-2 gap-6 mt-4">
                 <Field label={t('reservation.guest_name')} error={errors.guestName?.message}>
                   <input {...register('guestName')} placeholder={isHu ? 'Kovács János' : 'John Smith'}
@@ -155,7 +207,8 @@ export default function ReservationSection() {
                   <input {...register('email')} type="email" placeholder="email@example.com" className="form-input" />
                 </Field>
                 <Field label={t('reservation.pick_size')} error={errors.partySize?.message}>
-                  <input {...register('partySize', { valueAsNumber: true })} type="number" min={1} max={20}
+                  <input {...register('partySize', { valueAsNumber: true })} type="number" min={1}
+                         max={selectedArea === 'INDOOR' ? 28 : 15}
                          className="form-input" />
                 </Field>
               </div>

@@ -54,9 +54,15 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-pub-cream/5 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-pub-cream/30 text-xs">{t('footer.rights')}</p>
-          <a href="/admin/login" className="text-pub-cream/20 hover:text-pub-cream/40 text-xs transition-colors">
-            Admin
-          </a>
+          <div className="flex items-center gap-4">
+            <a href="/adatkezeles" className="text-pub-teal/50 hover:text-pub-teal text-xs transition-colors">
+              Adatkezelési tájékoztató
+            </a>
+            <span className="text-pub-cream/10">|</span>
+            <a href="/admin/login" className="text-pub-cream/20 hover:text-pub-cream/40 text-xs transition-colors">
+              Admin
+            </a>
+          </div>
         </div>
       </div>
     </footer>

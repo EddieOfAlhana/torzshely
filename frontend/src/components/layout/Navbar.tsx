@@ -44,21 +44,15 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* Logo */}
         <a href="#" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-           className="flex items-center gap-3 group">
-          <LogoMark />
-          <div className="hidden sm:block">
-            <div className="font-display text-pub-gold text-xl tracking-widest leading-none group-hover:text-pub-gold-light transition-colors">
-              TÖRZSHELY
-            </div>
-            <div className="font-display text-pub-cream/60 text-xs tracking-[0.4em]">XVI</div>
-          </div>
+           className="flex items-center group opacity-85 hover:opacity-100 transition-opacity">
+          <img src="/logo.png" alt="Törzshely logó" className="h-16 w-auto" />
         </a>
 
         {/* Desktop nav */}
         <div className="hidden lg:flex items-center gap-8">
           {NAV_LINKS.map(link => (
             <button key={link.key} onClick={() => handleNav(link.href)}
-              className="text-pub-cream/70 hover:text-pub-gold transition-colors duration-300 text-xs uppercase tracking-widest font-medium">
+              className="text-pub-cream/70 hover:text-pub-teal transition-colors duration-300 text-xs uppercase tracking-widest font-medium">
               {t(`nav.${link.key}`)}
             </button>
           ))}
@@ -102,18 +96,3 @@ export default function Navbar() {
   )
 }
 
-function LogoMark() {
-  return (
-    <svg width="44" height="44" viewBox="0 0 44 44" className="flex-shrink-0">
-      <circle cx="22" cy="22" r="20" fill="none" stroke="#c9a84c" strokeWidth="1.5" />
-      <circle cx="22" cy="22" r="17" fill="none" stroke="#c9a84c" strokeWidth="0.5" />
-      <text x="22" y="20" textAnchor="middle" fontFamily="Cinzel, serif"
-            fontSize="7" fill="#c9a84c" letterSpacing="2">TÖRZS</text>
-      <text x="22" y="29" textAnchor="middle" fontFamily="Cinzel, serif"
-            fontSize="6" fill="#c9a84c" letterSpacing="2">HELY 16</text>
-      {/* Decorative wheat on sides */}
-      <line x1="4" y1="22" x2="10" y2="22" stroke="#c9a84c" strokeWidth="0.5" />
-      <line x1="34" y1="22" x2="40" y2="22" stroke="#c9a84c" strokeWidth="0.5" />
-    </svg>
-  )
-}

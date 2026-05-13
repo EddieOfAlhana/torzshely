@@ -9,6 +9,7 @@ public class ReservationRequest {
     @NotBlank private String guestName;
     @NotBlank private String phone;
     @Email private String email;
-    @Min(1) @Max(20) @NotNull private Integer partySize;
+    @Min(1) @Max(30) @NotNull private Integer partySize;
     private String notes;
+    @NotBlank private String seatingArea; // "INDOOR" or "OUTDOOR"
 }

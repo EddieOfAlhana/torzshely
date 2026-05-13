@@ -5,6 +5,7 @@ import Lenis from 'lenis'
 import HomePage from './pages/HomePage'
 import AdminPage from './pages/AdminPage'
 import AdminLogin from './components/admin/AdminLogin'
+import PrivacyPage from './pages/PrivacyPage'
 import CookieBanner from './components/ui/CookieBanner'
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
       <CookieBanner />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/adatkezeles" element={<PrivacyPage />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/*" element={<AdminPage />} />
       </Routes>

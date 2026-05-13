@@ -20,12 +20,22 @@ const STATUS_COLORS: Record<string, string> = {
   CANCELLED: 'text-pub-cream/30 border-pub-cream/20',
 }
 
+const AREA_LABELS: Record<string, string> = {
+  INDOOR: 'Belső terem',
+  OUTDOOR: 'Kültéri terasz',
+}
+
+const AREA_ICONS: Record<string, string> = {
+  INDOOR: '🏠',
+  OUTDOOR: '🌿',
+}
+
 export default function ReservationsManager() {
   const [reservations, setReservations] = useState<Reservation[]>([])
   const [slots, setSlots] = useState<ReservationSlot[]>([])
   const [filter, setFilter] = useState<string>('ALL')
   const [tab, setTab] = useState<'reservations' | 'slots'>('reservations')
-  const [newSlot, setNewSlot] = useState({ slotDate: '', slotTime: '18:00', capacity: 20 })
+  const [newSlot, setNewSlot] = useState({ slotDate: '', slotTime: '18:00', indoorCapacity: 28, outdoorCapacity: 15 })
 
   const loadAll = () => {
     api.get<Reservation[]>('/reservations').then(r => setReservations(r.data)).catch(() => {})
@@ -50,7 +60,7 @@ export default function ReservationsManager() {
     try {
       await api.post('/reservations/slots', newSlot)
       toast.success('Időpont létrehozva!')
-      setNewSlot({ slotDate: '', slotTime: '18:00', capacity: 20 })
+      setNewSlot({ slotDate: '', slotTime: '18:00', indoorCapacity: 28, outdoorCapacity: 15 })
       loadAll()
     } catch { toast.error('Hiba!') }
   }
@@ -105,6 +115,11 @@ export default function ReservationsManager() {
                       <span className={`text-[10px] border px-2 py-0.5 font-display tracking-wider ${STATUS_COLORS[r.status]}`}>
                         {STATUS_LABELS[r.status]}
                       </span>
+                      {r.seatingArea && (
+                        <span className="text-[10px] border border-pub-gold/30 text-pub-gold/70 px-2 py-0.5 font-display tracking-wider">
+                          {AREA_ICONS[r.seatingArea]} {AREA_LABELS[r.seatingArea]}
+                        </span>
+                      )}
                     </div>
                     <div className="grid sm:grid-cols-2 gap-1 text-xs text-pub-cream/50">
                       <span>📅 {r.slot?.slotDate} {r.slot?.slotTime?.slice(0,5)}</span>
@@ -162,10 +177,16 @@ export default function ReservationsManager() {
                        className="admin-input w-32" />
               </div>
               <div>
-                <label className="block text-pub-cream/50 text-xs mb-1">Kapacitás (fő)</label>
-                <input type="number" value={newSlot.capacity}
-                       onChange={e => setNewSlot({...newSlot, capacity: Number(e.target.value)})}
-                       className="admin-input w-24" min={1} />
+                <label className="block text-pub-cream/50 text-xs mb-1">🏠 Belső (fő)</label>
+                <input type="number" value={newSlot.indoorCapacity}
+                       onChange={e => setNewSlot({...newSlot, indoorCapacity: Number(e.target.value)})}
+                       className="admin-input w-24" min={0} />
+              </div>
+              <div>
+                <label className="block text-pub-cream/50 text-xs mb-1">🌿 Kültéri (fő)</label>
+                <input type="number" value={newSlot.outdoorCapacity}
+                       onChange={e => setNewSlot({...newSlot, outdoorCapacity: Number(e.target.value)})}
+                       className="admin-input w-24" min={0} />
               </div>
               <button onClick={addSlot} className="btn-primary text-xs py-2.5 px-6">
                 + Hozzáadás
@@ -175,26 +196,35 @@ export default function ReservationsManager() {
 
           {/* Slots list */}
           <div className="space-y-2">
-            {slots.map(slot => (
-              <div key={slot.id} className="border border-pub-gold/15 p-4 flex items-center gap-4 hover:border-pub-gold/30 transition-colors">
-                <div className="flex-1">
-                  <span className="font-display text-pub-cream text-sm tracking-wider">
-                    {slot.slotDate} {slot.slotTime?.slice(0,5)}
-                  </span>
-                  <div className="text-xs text-pub-cream/40 mt-1">
-                    {slot.booked} / {slot.capacity} foglalt · {slot.capacity - slot.booked} szabad
+            {slots.map(slot => {
+              const totalCap = (slot.indoorCapacity ?? 28) + (slot.outdoorCapacity ?? 15)
+              const totalBooked = (slot.bookedIndoor ?? 0) + (slot.bookedOutdoor ?? 0)
+              const indoorAvail = (slot.indoorCapacity ?? 28) - (slot.bookedIndoor ?? 0)
+              const outdoorAvail = (slot.outdoorCapacity ?? 15) - (slot.bookedOutdoor ?? 0)
+              return (
+                <div key={slot.id} className="border border-pub-gold/15 p-4 hover:border-pub-gold/30 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <span className="font-display text-pub-cream text-sm tracking-wider">
+                        {slot.slotDate} {slot.slotTime?.slice(0,5)}
+                      </span>
+                      <div className="flex gap-4 text-xs text-pub-cream/40 mt-1">
+                        <span>🏠 {indoorAvail} / {slot.indoorCapacity ?? 28} szabad</span>
+                        <span>🌿 {outdoorAvail} / {slot.outdoorCapacity ?? 15} szabad</span>
+                      </div>
+                    </div>
+                    <div className="w-32 bg-pub-black/40 rounded-full h-1.5">
+                      <div className="bg-pub-gold h-1.5 rounded-full transition-all"
+                           style={{ width: totalCap > 0 ? `${(totalBooked / totalCap) * 100}%` : '0%' }} />
+                    </div>
+                    <button onClick={() => deleteSlot(slot.id)}
+                      className="text-red-400/50 hover:text-red-400 text-xs px-3 py-1.5 border border-red-400/10 hover:border-red-400/40 transition-colors">
+                      Töröl
+                    </button>
                   </div>
                 </div>
-                <div className="w-32 bg-pub-black/40 rounded-full h-1.5">
-                  <div className="bg-pub-gold h-1.5 rounded-full transition-all"
-                       style={{ width: `${(slot.booked / slot.capacity) * 100}%` }} />
-                </div>
-                <button onClick={() => deleteSlot(slot.id)}
-                  className="text-red-400/50 hover:text-red-400 text-xs px-3 py-1.5 border border-red-400/10 hover:border-red-400/40 transition-colors">
-                  Töröl
-                </button>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </>
       )}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import api from '../../services/api'
 import type { MenuCategory, MenuItem } from '../../types'
+import { BEER_COLORS } from '../sections/BeerSection'
 
 export default function MenuManager() {
   const [categories, setCategories] = useState<MenuCategory[]>([])
@@ -11,13 +12,12 @@ export default function MenuManager() {
   const [loading, setLoading] = useState(false)
 
   const loadCats = () => api.get<MenuCategory[]>('/menu/categories').then(r => setCategories(r.data))
+  const loadItems = (cat: MenuCategory) => api.get<MenuItem[]>(`/menu/items/category/${cat.id}/all`).then(r => setItems(r.data))
 
   useEffect(() => { loadCats() }, [])
+  useEffect(() => { if (selected) loadItems(selected) }, [selected])
 
-  useEffect(() => {
-    if (!selected) return
-    api.get<MenuItem[]>(`/menu/items/category/${selected.id}`).then(r => setItems(r.data))
-  }, [selected])
+  const isDraftBeer = selected?.nameHu === 'Csapolt sörök'
 
   const saveItem = async () => {
     if (!editing || !selected) return
@@ -30,7 +30,7 @@ export default function MenuManager() {
       else await api.post('/menu/items', form, { headers: { 'Content-Type': 'multipart/form-data' } })
       toast.success('Mentve!')
       setEditing(null)
-      api.get<MenuItem[]>(`/menu/items/category/${selected.id}`).then(r => setItems(r.data))
+      loadItems(selected)
     } catch { toast.error('Hiba!') }
     finally { setLoading(false) }
   }
@@ -38,7 +38,7 @@ export default function MenuManager() {
   const deleteItem = async (id: number) => {
     if (!confirm('Töröljük?')) return
     await api.delete(`/menu/items/${id}`)
-    if (selected) api.get<MenuItem[]>(`/menu/items/category/${selected.id}`).then(r => setItems(r.data))
+    if (selected) loadItems(selected)
   }
 
   return (
@@ -73,8 +73,13 @@ export default function MenuManager() {
           ) : (
             <>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-display text-pub-gold text-sm tracking-widest uppercase">
+                <h3 className="font-display text-pub-gold text-sm tracking-widest uppercase flex items-center gap-2">
                   {selected.nameHu}
+                  {isDraftBeer && (
+                    <span className="text-[10px] border border-pub-gold/30 text-pub-gold/50 px-1.5 py-0.5 normal-case tracking-normal">
+                      🍺 sörszín szerkeszthető
+                    </span>
+                  )}
                 </h3>
                 <button onClick={() => setEditing({ nameHu: '', active: true, featured: false, sortOrder: items.length })}
                   className="btn-primary text-xs py-2 px-4">
@@ -83,25 +88,44 @@ export default function MenuManager() {
               </div>
 
               <div className="space-y-2 mb-6">
-                {items.map(item => (
-                  <div key={item.id} className="border border-pub-gold/15 p-4 flex items-center gap-4 hover:border-pub-gold/30 transition-colors">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-pub-cream text-sm">{item.nameHu}</span>
-                        {item.featured && <span className="text-[10px] border border-pub-gold/50 text-pub-gold px-1">★</span>}
+                {items.map(item => {
+                  const inactive = item.active === false
+                  const swatchColor = item.color
+                    ? (item.color.startsWith('#')
+                        ? `linear-gradient(to bottom, ${item.color}cc, ${item.color}88)`
+                        : BEER_COLORS[item.color]?.gradient)
+                    : undefined
+                  return (
+                    <div key={item.id}
+                      className={`border p-4 flex items-center gap-4 transition-colors
+                        ${inactive
+                          ? 'border-white/5 opacity-40 hover:opacity-60'
+                          : 'border-pub-gold/15 hover:border-pub-gold/30'
+                        }`}>
+                      {/* Color swatch for draft beers */}
+                      {isDraftBeer && swatchColor && (
+                        <div className="w-5 h-8 rounded flex-shrink-0 border border-pub-gold/20"
+                             style={{ background: swatchColor }} />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-pub-cream text-sm">{item.nameHu}</span>
+                          {item.featured && <span className="text-[10px] border border-pub-gold/50 text-pub-gold px-1">★</span>}
+                          {inactive && <span className="text-[10px] border border-white/20 text-white/40 px-1">inaktív</span>}
+                        </div>
+                        {item.descriptionHu && <p className="text-pub-cream/40 text-xs mt-0.5 truncate">{item.descriptionHu}</p>}
                       </div>
-                      {item.descriptionHu && <p className="text-pub-cream/40 text-xs mt-0.5 truncate">{item.descriptionHu}</p>}
+                      <div className="text-pub-gold text-sm font-display flex-shrink-0">
+                        {item.priceHuf ? `${item.priceHuf.toLocaleString('hu-HU')} Ft` : '–'}
+                        {item.priceNote && <span className="text-pub-cream/30 text-xs ml-1">/{item.priceNote}</span>}
+                      </div>
+                      <div className="flex gap-2 flex-shrink-0">
+                        <button onClick={() => setEditing(item)} className="text-xs px-3 py-1.5 border border-pub-gold/20 text-pub-gold/70 hover:border-pub-gold transition-colors">Szerk.</button>
+                        <button onClick={() => deleteItem(item.id)} className="text-xs px-2.5 py-1.5 border border-red-400/20 text-red-400/70 hover:border-red-400 transition-colors">✕</button>
+                      </div>
                     </div>
-                    <div className="text-pub-gold text-sm font-display flex-shrink-0">
-                      {item.priceHuf ? `${item.priceHuf.toLocaleString('hu-HU')} Ft` : '–'}
-                      {item.priceNote && <span className="text-pub-cream/30 text-xs ml-1">/{item.priceNote}</span>}
-                    </div>
-                    <div className="flex gap-2 flex-shrink-0">
-                      <button onClick={() => setEditing(item)} className="text-xs px-3 py-1.5 border border-pub-gold/20 text-pub-gold/70 hover:border-pub-gold transition-colors">Szerk.</button>
-                      <button onClick={() => deleteItem(item.id)} className="text-xs px-2.5 py-1.5 border border-red-400/20 text-red-400/70 hover:border-red-400 transition-colors">✕</button>
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
                 {items.length === 0 && (
                   <p className="text-pub-cream/30 text-sm text-center py-8">Még nincsenek tételek ebben a kategóriában.</p>
                 )}
@@ -137,10 +161,76 @@ export default function MenuManager() {
                 <AdminField label="Ár (Ft)">
                   <input type="number" value={editing.priceHuf || ''} onChange={e => setEditing({...editing, priceHuf: e.target.value ? Number(e.target.value) : undefined})} className="admin-input w-full" />
                 </AdminField>
-                <AdminField label="Ármegjelölés (pl. 0,5l)">
+                <AdminField label="Kiszerelés (pl. 0,4l)">
                   <input value={editing.priceNote || ''} onChange={e => setEditing({...editing, priceNote: e.target.value})} className="admin-input w-full" />
                 </AdminField>
               </div>
+
+              {/* ABV and color – only for draught beers */}
+              {isDraftBeer && (
+                <>
+                  <AdminField label="Alkoholtartalom (pl. 5,2%)">
+                    <input
+                      value={editing.abv || ''}
+                      onChange={e => setEditing({ ...editing, abv: e.target.value })}
+                      placeholder="pl. 4,9%"
+                      className="admin-input w-full"
+                    />
+                  </AdminField>
+
+                  <AdminField label="Sör színe">
+                    <div className="grid grid-cols-3 gap-2 mt-1">
+                      {Object.entries(BEER_COLORS).map(([key, val]) => {
+                        const isSelected = !!(editing.color && !editing.color.startsWith('#') && editing.color === key)
+                        return (
+                          <button key={key} type="button"
+                            onClick={() => setEditing({ ...editing, color: key })}
+                            className={`flex items-center gap-2 px-3 py-2 border text-left transition-all text-xs
+                              ${isSelected
+                                ? 'border-pub-gold bg-pub-gold/10 text-pub-gold'
+                                : 'border-pub-gold/15 text-pub-cream/50 hover:border-pub-gold/40 hover:text-pub-cream'
+                              }`}>
+                            <span className="inline-block w-5 h-5 rounded-sm flex-shrink-0 border border-white/10"
+                                  style={{ background: val.gradient }} />
+                            <span>{val.label}</span>
+                            {isSelected && <span className="ml-auto text-pub-gold">✓</span>}
+                          </button>
+                        )
+                      })}
+
+                      {/* Custom RGB option */}
+                      <label className={`flex items-center gap-2 px-3 py-2 border cursor-pointer transition-all text-xs
+                        ${editing.color?.startsWith('#')
+                          ? 'border-pub-gold bg-pub-gold/10 text-pub-gold'
+                          : 'border-pub-gold/15 text-pub-cream/50 hover:border-pub-gold/40 hover:text-pub-cream'
+                        }`}>
+                        <input
+                          type="color"
+                          className="w-5 h-5 rounded-sm border-0 bg-transparent cursor-pointer flex-shrink-0"
+                          value={editing.color?.startsWith('#') ? editing.color : '#ff9900'}
+                          onChange={e => setEditing({ ...editing, color: e.target.value })}
+                        />
+                        <span>Egyedi</span>
+                        {editing.color?.startsWith('#') && <span className="ml-auto text-pub-gold">✓</span>}
+                      </label>
+                    </div>
+
+                    {/* Live preview */}
+                    {editing.color && (
+                      <div className="mt-3 flex items-center gap-3">
+                        <div className="w-12 h-14 rounded relative overflow-hidden border border-pub-gold/20 flex-shrink-0"
+                             style={{ background: editing.color.startsWith('#')
+                               ? `linear-gradient(to bottom, ${editing.color}cc, ${editing.color}, ${editing.color}88)`
+                               : BEER_COLORS[editing.color]?.gradient }}>
+                          <div className="absolute top-0 left-0 right-0 h-3 rounded-b-full bg-white/75" />
+                        </div>
+                        <span className="text-pub-cream/40 text-xs">Előnézet – így fog kinézni a weboldalon</span>
+                      </div>
+                    )}
+                  </AdminField>
+                </>
+              )}
+
               <div className="flex gap-6">
                 <label className="flex items-center gap-2 text-sm text-pub-cream/70 cursor-pointer">
                   <input type="checkbox" checked={editing.featured !== false && !!editing.featured} onChange={e => setEditing({...editing, featured: e.target.checked})} className="accent-pub-gold" />

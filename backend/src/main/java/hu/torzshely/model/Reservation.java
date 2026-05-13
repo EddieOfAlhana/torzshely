@@ -33,6 +33,9 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
 
+    @Enumerated(EnumType.STRING)
+    private SeatingArea seatingArea;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
@@ -40,4 +43,5 @@ public class Reservation {
     void prePersist() { createdAt = LocalDateTime.now(); }
 
     public enum Status { PENDING, APPROVED, REJECTED, CANCELLED }
+    public enum SeatingArea { INDOOR, OUTDOOR }
 }

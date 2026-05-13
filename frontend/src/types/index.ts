@@ -36,6 +36,8 @@ export interface MenuItem {
   featured?: boolean
   active?: boolean
   category?: MenuCategory
+  color?: string
+  abv?: string
 }
 
 export interface GalleryPhoto {
@@ -77,6 +79,10 @@ export interface ReservationSlot {
   slotTime: string
   capacity: number
   booked: number
+  indoorCapacity: number
+  outdoorCapacity: number
+  bookedIndoor: number
+  bookedOutdoor: number
 }
 
 export interface Reservation {
@@ -88,5 +94,6 @@ export interface Reservation {
   partySize: number
   notes?: string
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED'
+  seatingArea?: 'INDOOR' | 'OUTDOOR'
   createdAt: string
 }

@@ -19,9 +19,20 @@ public class ReservationSlot {
     private LocalTime slotTime;
 
     @Column(nullable = false)
-    private Integer capacity;    // total seats available
+    private Integer capacity;       // total (indoorCapacity + outdoorCapacity)
 
-    private Integer booked = 0;  // current bookings
+    private Integer booked = 0;     // total booked (bookedIndoor + bookedOutdoor)
+
+    @Column(nullable = false)
+    private Integer indoorCapacity = 28;
+
+    @Column(nullable = false)
+    private Integer outdoorCapacity = 15;
+
+    private Integer bookedIndoor = 0;
+    private Integer bookedOutdoor = 0;
 
     public int available() { return capacity - booked; }
+    public int availableIndoor() { return indoorCapacity - bookedIndoor; }
+    public int availableOutdoor() { return outdoorCapacity - bookedOutdoor; }
 }

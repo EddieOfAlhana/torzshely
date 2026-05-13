@@ -31,6 +31,10 @@ const hu = {
   ticker: {
     label: 'Következő programok',
   },
+  beers: {
+    title: 'Csapolt söreink',
+    subtitle: 'A kerületben egyedülálló kínálat',
+  },
   menu: {
     title: 'Kínálatunk',
     subtitle: 'Ételek & Italok',

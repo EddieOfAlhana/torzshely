@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/events")
@@ -69,10 +70,11 @@ public class EventController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return repo.findById(id).map(e -> {
-            e.setActive(false);
-            repo.save(e);
-            return ResponseEntity.<Void>ok().build();
-        }).orElse(ResponseEntity.notFound().build());
+        Optional<Event> found = repo.findById(id);
+        if (found.isEmpty()) return ResponseEntity.notFound().build();
+        Event e = found.get();
+        e.setActive(false);
+        repo.save(e);
+        return ResponseEntity.ok().build();
     }
 }

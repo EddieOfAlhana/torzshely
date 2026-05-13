@@ -64,6 +64,11 @@ public class MenuController {
         return itemRepo.findByCategoryIdAndActiveTrueOrderBySortOrderAsc(categoryId);
     }
 
+    @GetMapping("/items/category/{categoryId}/all")
+    public List<MenuItem> byCategoryAll(@PathVariable Long categoryId) {
+        return itemRepo.findByCategoryIdOrderBySortOrderAsc(categoryId);
+    }
+
     @PostMapping("/items")
     public ResponseEntity<MenuItem> createItem(@RequestPart("item") MenuItem item,
                                                @RequestPart(value = "image", required = false) MultipartFile image) {
@@ -85,7 +90,9 @@ public class MenuController {
             i.setSortOrder(updated.getSortOrder());
             i.setFeatured(updated.getFeatured());
             i.setActive(updated.getActive());
-            i.setCategory(updated.getCategory());
+            i.setColor(updated.getColor());
+            i.setAbv(updated.getAbv());
+            if (updated.getCategory() != null) i.setCategory(updated.getCategory());
             if (image != null && !image.isEmpty()) {
                 if (i.getImageUrl() != null) fileStorage.delete(i.getImageUrl());
                 i.setImageUrl(fileStorage.store(image));
@@ -96,7 +103,7 @@ public class MenuController {
 
     @DeleteMapping("/items/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
-        itemRepo.findById(id).ifPresent(i -> { i.setActive(false); itemRepo.save(i); });
+        itemRepo.deleteById(id);
         return ResponseEntity.ok().build();
     }
 }

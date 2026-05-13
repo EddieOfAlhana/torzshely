@@ -1,0 +1,29 @@
+# Node
+node_modules/
+dist/
+.env.local
+*.log
+
+# Java / Maven
+target/
+*.class
+*.jar
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Environment
+.env
+*.env
+
+# Uploads
+backend/uploads/
+
+# Generated images
+frontend/public/generated/

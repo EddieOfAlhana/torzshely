@@ -1,0 +1,97 @@
+package hu.torzshely.controller;
+
+import hu.torzshely.dto.ReservationRequest;
+import hu.torzshely.model.Reservation;
+import hu.torzshely.model.ReservationSlot;
+import hu.torzshely.repository.ReservationRepository;
+import hu.torzshely.repository.ReservationSlotRepository;
+import hu.torzshely.service.EmailService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/reservations")
+@RequiredArgsConstructor
+public class ReservationController {
+
+    private final ReservationRepository reservationRepo;
+    private final ReservationSlotRepository slotRepo;
+    private final EmailService emailService;
+
+    @GetMapping("/slots/{date}")
+    public List<ReservationSlot> slotsForDate(
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return slotRepo.findBySlotDateOrderBySlotTimeAsc(date);
+    }
+
+    @GetMapping("/slots/range")
+    public List<ReservationSlot> slotsRange(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        return slotRepo.findBySlotDateBetweenOrderBySlotDateAscSlotTimeAsc(from, to);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> book(@Valid @RequestBody ReservationRequest req) {
+        ReservationSlot slot = slotRepo.findById(req.getSlotId())
+                .orElseThrow(() -> new RuntimeException("Slot not found"));
+        if (slot.available() < req.getPartySize()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Nem áll rendelkezésre elegendő szabad hely erre az időpontra."));
+        }
+        Reservation r = Reservation.builder()
+                .slot(slot).guestName(req.getGuestName()).phone(req.getPhone())
+                .email(req.getEmail()).partySize(req.getPartySize()).notes(req.getNotes())
+                .status(Reservation.Status.PENDING).build();
+        slot.setBooked(slot.getBooked() + req.getPartySize());
+        slotRepo.save(slot);
+        Reservation saved = reservationRepo.save(r);
+        emailService.sendReservationConfirmation(saved);
+        emailService.sendReservationNotification(saved);
+        return ResponseEntity.ok(Map.of("id", saved.getId(), "message", "Foglalásod megérkezett! Hamarosan visszajelzünk."));
+    }
+
+    @GetMapping
+    public List<Reservation> all() {
+        return reservationRepo.findAllByOrderByCreatedAtDesc();
+    }
+
+    @GetMapping("/pending")
+    public List<Reservation> pending() {
+        return reservationRepo.findByStatusOrderByCreatedAtDesc(Reservation.Status.PENDING);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Reservation> updateStatus(@PathVariable Long id,
+                                                     @RequestBody Map<String, String> body) {
+        return reservationRepo.findById(id).map(r -> {
+            Reservation.Status newStatus = Reservation.Status.valueOf(body.get("status"));
+            if (newStatus == Reservation.Status.REJECTED && r.getStatus() == Reservation.Status.PENDING) {
+                ReservationSlot slot = r.getSlot();
+                slot.setBooked(Math.max(0, slot.getBooked() - r.getPartySize()));
+                slotRepo.save(slot);
+            }
+            r.setStatus(newStatus);
+            Reservation saved = reservationRepo.save(r);
+            emailService.sendReservationStatusUpdate(saved);
+            return ResponseEntity.ok(saved);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/slots")
+    public ReservationSlot createSlot(@RequestBody ReservationSlot slot) {
+        return slotRepo.save(slot);
+    }
+
+    @DeleteMapping("/slots/{id}")
+    public ResponseEntity<Void> deleteSlot(@PathVariable Long id) {
+        slotRepo.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+}

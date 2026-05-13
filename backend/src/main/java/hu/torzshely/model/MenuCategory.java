@@ -19,7 +19,7 @@ public class MenuCategory {
     private Integer sortOrder = 0;
     private Boolean active = true;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("sortOrder ASC")
     private List<MenuItem> items;
 }

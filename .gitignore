@@ -26,4 +26,4 @@ target/
 backend/uploads/
 
 # Generated images
-frontend/public/generated/
+# frontend/public/generated/
